@@ -22,7 +22,6 @@ from mmdet.apis import init_detector, inference_detector
 from mmdet.registry import VISUALIZERS
 import mmdet.models.losses as losses
 
-# TODO: support fuse_conv_bn and format_only
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Adversarial Attacked Image Generation pipeline with MMDetection')
