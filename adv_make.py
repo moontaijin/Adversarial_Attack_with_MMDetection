@@ -82,6 +82,7 @@ def main():
     device = args.device
     img_path = args.img_dir
     output_path = args.save_dir
+    extensions = ['.jpg', '.png', '.jpeg']
 
     model = init_detector(CONFIG,CHECKPOINT,device=device)
 
@@ -95,7 +96,7 @@ def main():
     cfg.work_dir = osp.join('./work_dirs',osp.splitext(osp.basename(CONFIG))[0])
     runner = Runner.from_cfg(cfg)
 
-    files = os.listdir(img_path)
+    files = [file for file in os.listdir(img_path) if any(file.endswith(ext) for ext in extensions)]
     img = cv2.imread(os.path.join(img_path,files[0]))
     img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 
