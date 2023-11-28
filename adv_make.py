@@ -72,6 +72,30 @@ def parse_args():
 
     return args
 
+def resize_bbox(bbox, original_size, new_size):
+    """
+    Resize the bounding box according to the new image size.
+
+    Args:
+    bbox (tuple): The original bounding box (x1, y1, x2, y2).
+    original_size (tuple): The size (width, height) of the original image.
+    new_size (tuple): The size (width, height) of the new image.
+
+    Returns:
+    tuple: The resized bounding box.
+    """
+    x1, y1, x2, y2 = bbox
+    orig_width, orig_height = original_size
+    new_width, new_height = new_size
+
+    # Resize the bbox
+    x1_new = x1 * new_width / orig_width
+    y1_new = y1 * new_height / orig_height
+    x2_new = x2 * new_width / orig_width
+    y2_new = y2 * new_height / orig_height
+
+    return torch.tensor([x1_new, y1_new, x2_new, y2_new])
+
 def main():
     args = parse_args()
 
@@ -164,6 +188,12 @@ def main():
             if args.is_save_detect == True:
                 # 5. Adversarial Attack 된 이미지의 inference 결과를 저장
                 model.forward(img,pred,mode='predict')
+
+                ## 모델의 feed forward 결과가 config 파일의 resize 크기에 맞춰져 나오기 때문에 이를 다시 이미지 사이즈로 resize 함
+                for idx, bbox in enumerate(pred[0].pred_instances['bboxes']):
+                    new_bbox = resize_bbox(bbox,pred[0].ori_shape,pred[0].img_shape)
+                    pred[0].pred_instances['bboxes'][idx] = new_bbox
+                
                 visualizer.add_datasample(
                     'result',
                     (img[0].cpu().permute(1,2,0).numpy()*255).astype('uint8'),
