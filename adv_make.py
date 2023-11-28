@@ -1,27 +1,20 @@
 import random
 import os
-import json
-import copy
 import cv2
 import argparse
 import os.path as osp
 import numpy as np
-import matplotlib.pyplot as plt
-from PIL import Image
+import torch
+
 from tqdm import tqdm
 
 from tools import resize_bbox
 
-import torch
-import torchattacks
-
-import mmcv
 from mmengine.runner import Runner
 from mmengine.config import Config
 from mmengine.structures import InstanceData
 from mmdet.apis import init_detector, inference_detector
 from mmdet.registry import VISUALIZERS
-import mmdet.models.losses as losses
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -97,6 +90,7 @@ def main():
     runner = Runner.from_cfg(cfg)
 
     files = [file for file in os.listdir(img_path) if any(file.endswith(ext) for ext in extensions)]
+
     img = cv2.imread(os.path.join(img_path,files[0]))
     img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 
@@ -108,7 +102,7 @@ def main():
     epochs = int(args.steps)
 
     if args.method == 'DAG':
-        for file in files[150:152]:
+        for file in files:
             model = model.eval()
             img = cv2.imread(os.path.join(img_path,file))
             img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)

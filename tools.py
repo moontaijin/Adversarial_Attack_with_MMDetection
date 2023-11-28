@@ -1,3 +1,5 @@
+import torch
+
 def resize_bbox(bbox, original_size, new_size):
     """
     Resize the bounding box according to the new image size.
