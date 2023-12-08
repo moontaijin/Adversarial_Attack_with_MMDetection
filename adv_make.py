@@ -100,6 +100,7 @@ def main():
     random.shuffle(random_labels)
 
     epochs = int(args.steps)
+    epsilon = 0.03
 
     if args.method == 'DAG':
         for file in files:
@@ -143,13 +144,11 @@ def main():
                     loss.backward()
                     optimizer.step()
 
-                    '''
-                    # 이 부분을 넣으면 갑자기 inference 결과가 이상하게 나옴
                     with torch.no_grad():
-                        pertubation = torch.clamp(img-origin_img,min=-epsilon,max=epsilon)
-                        img.data = origin_img + pertubation
-                        img.clamp_(0,1)
-                    '''
+                        pertubation = torch.clamp(img[0]-origin_img[0],min=-epsilon,max=epsilon)
+                        img[0].data = origin_img[0] + pertubation
+                        img[0].clamp_(0,1)
+                    
             del(optimizer)
             del(loss)
             del(normal_losses)
