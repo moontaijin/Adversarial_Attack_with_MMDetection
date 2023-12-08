@@ -171,7 +171,7 @@ def main():
                     (img[0].cpu().permute(1,2,0).numpy()*255).astype('uint8'),
                     data_sample=pred[0],
                     draw_gt=False,
-                    pred_score_thr = args.thr,
+                    pred_score_thr = float(args.thr),
                     wait_time=0,
                     out_file = os.path.join(output_path,'detect',file)
                 )
