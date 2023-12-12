@@ -87,7 +87,6 @@ def main():
 
     cfg = Config.fromfile(CONFIG)
     cfg.work_dir = osp.join('./work_dirs',osp.splitext(osp.basename(CONFIG))[0])
-    runner = Runner.from_cfg(cfg)
 
     files = [file for file in os.listdir(img_path) if any(file.endswith(ext) for ext in extensions)]
 
@@ -143,12 +142,12 @@ def main():
                     pbar.update(1)
                     loss.backward()
                     optimizer.step()
-
+                    '''
                     with torch.no_grad():
                         pertubation = torch.clamp(img[0]-origin_img[0],min=-epsilon,max=epsilon)
                         img[0].data = origin_img[0] + pertubation
                         img[0].clamp_(0,1)
-                    
+                    '''
             del(optimizer)
             del(loss)
             del(normal_losses)
