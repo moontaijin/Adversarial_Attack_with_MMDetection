@@ -129,8 +129,8 @@ def main():
             del(pred[0]['pred_instances']) # pred_instances 제거
 
             # 4. Fake GT를 통해 Adversarial Attack 이미지 생성
-            origin_img = img.clone().detach()
             img.requires_grad = True
+            origin_img = img.detach().clone()
             optimizer = torch.optim.SGD([img],lr=args.lr)
 
             with tqdm(total=epochs) as pbar:
@@ -144,9 +144,12 @@ def main():
                     optimizer.step()
                     
                     with torch.no_grad():
-                        pertubation = torch.clamp(img[0]-origin_img[0],min=-epsilon,max=epsilon)
-                        img[0].data = origin_img[0] + pertubation
-                        img[0].clamp_(0,1)
+                        pertubation = torch.clamp(img[0].detach()-origin_img[0],min=-epsilon,max=epsilon)
+                        img.data = origin_img.detach() + pertubation.detach()
+                        img.clamp_(0,1)
+                    
+                print(torch.max(pertubation))
+                    
                     
             del(optimizer)
             del(loss)
