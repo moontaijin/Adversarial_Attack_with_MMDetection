@@ -75,6 +75,11 @@ def main():
     device = args.device
     img_path = args.img_dir
     output_path = args.save_dir
+    if not os.path.exists(output_path): 
+        os.makedirs(output_path)
+        os.makedirs(os.path.join(output_path,'numpy'))
+        os.makedirs(os.path.join(output_path,'detect'))
+
     extensions = ['.jpg', '.png', '.jpeg']
 
     model = init_detector(CONFIG,CHECKPOINT,device=device)
@@ -147,8 +152,6 @@ def main():
                         pertubation = torch.clamp(img[0].detach()-origin_img[0],min=-epsilon,max=epsilon)
                         img.data = origin_img.detach() + pertubation.detach()
                         img.clamp_(0,1)
-                    
-                print(torch.max(pertubation))
                     
                     
             del(optimizer)
